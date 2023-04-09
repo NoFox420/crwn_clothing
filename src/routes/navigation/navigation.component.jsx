@@ -18,6 +18,9 @@ function Navigation() {
           <Link className="nav-link" to="/shop">
             SHOP
           </Link>
+          <Link className="nav-link" to="/sign-in">
+            SIGN IN
+          </Link>
         </div>
       </div>
       {/* Render H1 first and then render everything else inside <Route/> component */}
