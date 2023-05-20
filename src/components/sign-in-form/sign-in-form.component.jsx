@@ -32,9 +32,7 @@ const SignInForm = () => {
   //creating async func to log user credentials
   const signInWithGoogle = async () => {
     //get value
-    const { user } = await signInWithGooglePopup();
-    //get unique user id from user object
-    await createUserDocumentFromAuth(user);
+    await signInWithGooglePopup();
   };
 
   const handleSubmit = async (event) => {
@@ -42,11 +40,7 @@ const SignInForm = () => {
 
     //sign in user
     try {
-      const response = await signInAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
-      console.log(response);
+      signInAuthUserWithEmailAndPassword(email, password);
       resetFormFields();
     } catch (error) {
       switch (error.code) {
