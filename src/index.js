@@ -4,6 +4,9 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { UserProvider } from "./contexts/user.contexts";
+import { ProductsProvider } from "./contexts/products.context";
+import { CartProvider } from "./contexts/cart.context";
+
 import "./index.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -11,8 +14,13 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <UserProvider>
-        {/*nesting the component in the router component in order to route*/}
-        <App />
+        {/*ProductsProvider can reach up and access UserProvider */}
+        <ProductsProvider>
+          <CartProvider>
+            {/*nesting the component in the router component in order to route*/}
+            <App />
+          </CartProvider>
+        </ProductsProvider>
       </UserProvider>
     </BrowserRouter>
   </React.StrictMode>

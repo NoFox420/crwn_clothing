@@ -1,14 +1,21 @@
 // parent level component
-import { Outlet, Link } from "react-router-dom";
 import { Fragment, useContext } from "react";
-import { ReactComponent as CrwnLogo } from "../../assets/crown.svg";
-import "./navigation.styles.scss";
+import { Outlet, Link } from "react-router-dom";
+
+import CartIcon from "../../components/cart-icon/cart-icon.component";
+import CartDropdown from "../../components/cart-dropdown/cart-dropdown.component";
 
 import { UserContext } from "../../contexts/user.contexts";
+import { CartContext } from "../../contexts/cart.context";
+
+import { ReactComponent as CrwnLogo } from "../../assets/crown.svg";
 import { signOutUser } from "../../utils/firebase/firebase.utils";
+
+import "./navigation.styles.scss";
 
 function Navigation() {
   const { currentUser } = useContext(UserContext);
+  const { isCartOpen } = useContext(CartContext);
 
   return (
     // renders to nothing on page, used as a wrapping div for components
@@ -33,7 +40,9 @@ function Navigation() {
               SIGN IN
             </Link>
           )}
+          <CartIcon />
         </div>
+        {isCartOpen && <CartDropdown />}
       </div>
       {/* Render H1 first and then render everything else inside <Route/> component */}
       <Outlet />
