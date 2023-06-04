@@ -14,7 +14,16 @@ import {
 //doc= getting document from database
 //getDoc= getting data inside document
 //setDoc= writing data inside document
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -48,6 +57,40 @@ export const signInWithGoogleRedirect = () =>
 
 //instanciating a database
 export const db = getFirestore();
+
+//function to add items from shop_data.js file into firebase
+export const addCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  //creating a reference, pointing to the database with passed in key
+  const collectionRef = collection(db, collectionKey);
+  //batch allows to execute multiple actions as one
+  const batch = writeBatch(db);
+
+  objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
+  await batch.commit();
+  console.log("batch done");
+};
+
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, "categories");
+
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
+};
 
 //taking data from auth service and storing it in firestore
 export const createUserDocumentFromAuth = async (

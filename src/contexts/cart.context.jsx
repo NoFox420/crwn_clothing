@@ -78,18 +78,13 @@ export const CartProvider = ({ children }) => {
     [cartItems]
   );
 
-  useEffect(
-    () => {
-      // reduce first argument is callback, second argument is starting value
-      const newCartTotal = cartItems.reduce(
-        (total, cartItem) => total + cartItem.quantity * cartItem.price,
-        0
-      );
-      setCartTotal(newCartTotal);
-    },
-    //only runs when dependency changes
-    [cartItems]
-  );
+  useEffect(() => {
+    const newCartTotal = cartItems.reduce(
+      (total, cartItem) => total + cartItem.quantity * cartItem.price,
+      0
+    );
+    setCartTotal(newCartTotal);
+  }, [cartItems]);
 
   const addItemToCart = (productToAdd) => {
     setCartItems(addCartItem(cartItems, productToAdd));

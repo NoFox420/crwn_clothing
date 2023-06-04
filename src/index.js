@@ -4,7 +4,7 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { UserProvider } from "./contexts/user.contexts";
-import { ProductsProvider } from "./contexts/products.context";
+import { CategoriesProvider } from "./contexts/categories.context";
 import { CartProvider } from "./contexts/cart.context";
 
 import "./index.scss";
@@ -15,12 +15,12 @@ root.render(
     <BrowserRouter>
       <UserProvider>
         {/*ProductsProvider can reach up and access UserProvider */}
-        <ProductsProvider>
+        <CategoriesProvider>
           <CartProvider>
             {/*nesting the component in the router component in order to route*/}
             <App />
           </CartProvider>
-        </ProductsProvider>
+        </CategoriesProvider>
       </UserProvider>
     </BrowserRouter>
   </React.StrictMode>

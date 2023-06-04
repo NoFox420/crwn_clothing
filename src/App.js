@@ -14,9 +14,9 @@ function App() {
         {/* if path = / render this element in <Outlet/> in parent component */}
         <Route index element={<Home />} />
         {/* if path = / render <Navigation/> and <Shop/> */}
-        <Route path="shop" element={<Shop />} />
+        <Route path="shop/*" element={<Shop />} />
         <Route path="auth" element={<Authentication />} />
-        <Route path="checkout" element={<Checkout/>}/>
+        <Route path="checkout" element={<Checkout />} />
       </Route>
     </Routes>
   );
