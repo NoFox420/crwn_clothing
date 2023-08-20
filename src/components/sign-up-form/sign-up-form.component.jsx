@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
@@ -9,6 +10,7 @@ import {
 } from "../../utils/firebase/firebase.utils";
 
 import "./sign-up-form.styles.scss";
+import { signUpStart } from "../../store/user/user.action";
 
 //initialized object for input values
 const defaultFormFields = {
@@ -24,6 +26,8 @@ const SignUpForm = () => {
 
   //destructuring off values for further use
   const { displayName, email, password, confirmPassword } = formFields;
+
+  const dispatch = useDispatch();
 
   //resetting sign up form after submit
   const resetFormFields = () => {
@@ -44,12 +48,7 @@ const SignUpForm = () => {
     //create user
     try {
       //calling firebase server and passing in values from formFields
-      const { user } = await createAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
-      //passing email and password confirmation into user document and adding displayName value
-      await createUserDocumentFromAuth(user, { displayName });
+      dispatch(signUpStart(email, password, displayName));
       resetFormFields();
     } catch (error) {
       //what to do if email already in database

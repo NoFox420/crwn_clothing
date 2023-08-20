@@ -86,40 +86,31 @@ export const getCategoriesAndDocuments = async () => {
 //taking data from auth service and storing it in firestore
 export const createUserDocumentFromAuth = async (
   userAuth,
-  //passing in values if not provided by authenticator
-  additionalInformation = {}
+  additionalDetails = {}
 ) => {
-  if (!userAuth) return;
-  //check if existing document reference exists
   const userDocRef = doc(db, "users", userAuth.uid);
 
-  //get data related to userDocRef
-  const userSnapshot = await getDoc(userDocRef);
+  const userSnapShot = await getDoc(userDocRef);
 
-  //what to do if data doesn't exist
-  if (!userSnapshot.exists()) {
-    //get data from user object
+  if (!userSnapShot.exists()) {
     const { displayName, email } = userAuth;
-    //get time when signed in
     const createdAt = new Date();
 
-    //set data to user document passing it the user reference
     try {
-      //set doc with object
       await setDoc(userDocRef, {
         displayName,
         email,
         createdAt,
-        //spreading object in after previous values have been filled, if null: overwrite
-        ...additionalInformation,
+        ...additionalDetails,
       });
+      const userSnapShot = await getDoc(userDocRef);
+      return userSnapShot;
     } catch (error) {
-      //log message if error occurs
-      console.log("error creating user", error.message);
+      console.log("Error creating the user", error.message);
     }
   }
-  //what to do if userSnapshot already exists
-  return userDocRef;
+
+  return userSnapShot;
 };
 
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
@@ -137,3 +128,16 @@ export const signOutUser = async () => await signOut(auth);
 
 export const onAuthStateChangedListener = (callback) =>
   onAuthStateChanged(auth, callback);
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (userAuth) => {
+        unsubscribe();
+        resolve(userAuth);
+      },
+      reject
+    );
+  });
+};
