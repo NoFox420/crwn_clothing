@@ -12,14 +12,25 @@ import Home from "./routes/home/home.component";
 import Authentication from "./routes/authentication/authentication.component";
 import Shop from "./routes/shop/shop.component";
 import Checkout from "./routes/checkout/checkout.component";
-import { checkUserSession } from "./store/user/user.action";
+import { setCurrentUser } from "./store/user/user.slice";
 
 function App() {
   const dispatch = useDispatch();
 
   //stops listener if component unmounts
   useEffect(() => {
-    dispatch(checkUserSession());
+    const unsubscribe = onAuthStateChangedListener((user) => {
+      if (user) {
+        createUserDocumentFromAuth(user);
+      }
+      //only selecting useful values from user object and returning a new object if user is true in first place
+      //higher order function that returns another function
+      const pickedUser =
+        user && (({ accessToken, email }) => ({ accessToken, email }))(user);
+
+      dispatch(setCurrentUser(pickedUser));
+    });
+    return unsubscribe;
   }, []);
 
   return (

@@ -1,86 +1,53 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 
 import FormInput from "../form-input/form-input.component";
 import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
 
 import {
-  signInWithGooglePopup,
-  createUserDocumentFromAuth,
   signInAuthUserWithEmailAndPassword,
+  signInWithGooglePopup,
 } from "../../utils/firebase/firebase.utils";
 
-import {
-  googleSignInStart,
-  emailSignInStart,
-} from "../../store/user/user.action";
+import { SignInContainer, ButtonsContainer } from "./sign-in-form.styles";
 
-import "./sign-in-form.styles.scss";
-
-//initialized object for input values
 const defaultFormFields = {
   email: "",
   password: "",
 };
 
 const SignInForm = () => {
-  const dispatch = useDispatch();
-  //setting formFields with passing in values from inputs
   const [formFields, setFormFields] = useState(defaultFormFields);
-
-  //destructuring off values for further use
   const { email, password } = formFields;
 
-  //resetting sign up form after submit
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
   };
 
-  //creating async func to log user credentials
   const signInWithGoogle = async () => {
-    //get value
-    dispatch(googleSignInStart());
+    await signInWithGooglePopup();
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    //sign in user
     try {
-      dispatch(emailSignInStart(email, password));
+      await signInAuthUserWithEmailAndPassword(email, password);
       resetFormFields();
     } catch (error) {
-      switch (error.code) {
-        case "auth/wrong-password":
-          alert("incorrect password for email");
-          //once condition apply don't look for any else
-          break;
-
-        case "auth/user-not-found":
-          alert("no user associated with this email");
-          break;
-        default:
-          console.log(error);
-      }
+      console.log("user sign in failed", error);
     }
   };
 
-  //what happens when input values change
-  //takes input event when values change
   const handleChange = (event) => {
-    //structuring the identifier and values off from event object
     const { name, value } = event.target;
-    //setting formFields updating only the changed values
-    //[name]: will be filled with name value of input
-    //value will be the actual value thats in the input
+
     setFormFields({ ...formFields, [name]: value });
   };
 
   return (
-    <div className="sign-up-container">
+    <SignInContainer>
       <h2>Already have an account?</h2>
       <span>Sign in with your email and password</span>
-      {/* using onSubmit handler to determine what button press will do*/}
       <form onSubmit={handleSubmit}>
         <FormInput
           label="Email"
@@ -99,21 +66,18 @@ const SignInForm = () => {
           name="password"
           value={password}
         />
-
-        <div className="buttons-container">
-          {/* adding type submit to submit the form */}
+        <ButtonsContainer>
           <Button type="submit">Sign In</Button>
-          {/*buttons are always type submit inside forms, prevent submit with type=button */}
           <Button
             buttonType={BUTTON_TYPE_CLASSES.google}
             type="button"
             onClick={signInWithGoogle}
           >
-            Google Sign In
+            Sign In With Google
           </Button>
-        </div>
+        </ButtonsContainer>
       </form>
-    </div>
+    </SignInContainer>
   );
 };
 
